@@ -1,3 +1,4 @@
+from email import policy
 from cust_insurance_app.serializers import CustomerDetailsSerializer, PolicyDetailsSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -36,3 +37,18 @@ def get_policy_count_for_month_by_region(request, *args, **kwargs):
     serialized_q = json.dumps(list(somevar), cls=DjangoJSONEncoder)
 
     return Response(serialized_q, status=status.HTTP_200_OK)
+
+@api_view(('POST',))
+def update_policy_details(request, *args, **kwargs):
+    policy_details = request.data.get('policy_details')
+    policy_details_obj = PolicyDetails.objects.get(PolicyId=policy_details['PolicyId'])
+    policy_details_obj.Premium = policy_details['Premium']
+    policy_details_obj.Fuel = policy_details['Fuel']
+    policy_details_obj.VEHICLE_SEGMENT = policy_details['VEHICLE_SEGMENT']
+    policy_details_obj.Bodily_Injury_Liability = policy_details['Bodily_Injury_Liability']
+    policy_details_obj.Collision = policy_details['Collision']
+    policy_details_obj.Comprehensive = policy_details['Comprehensive']
+    policy_details_obj.Personal_Injury_Protection = policy_details['Personal_Injury_Protection']
+    policy_details_obj.Property_Damage_Liability = policy_details['Property_Damage_Liability']
+    policy_details_obj.save()
+    return Response("updated", status=status.HTTP_200_OK)
